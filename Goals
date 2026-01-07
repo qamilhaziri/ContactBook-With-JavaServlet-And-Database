@@ -1,0 +1,77 @@
+Add method restore,
+Make delete method endpoint
+
+
+
+ ContactService service;
+    Long id;
+    ContactEntity contact;
+
+    @BeforeEach
+    public void setUp() {
+        service = new ContactService();
+        contact = new ContactEntity();
+        id = 6L;
+        contact.setContactID(id);
+        contact.setFirstName("Test");
+    }
+
+    @Test
+    public void testAddContact(){
+        ContactEntity entity = new ContactEntity();
+        entity.setFirstName("TestContact");
+        entity.setNumber("0123");
+
+        int result = service.addContact(entity);
+
+        assertTrue(result > 0);
+    }
+
+    @Test
+    public void testGetContact(){
+        ContactEntity contactEntity = service.getContact(6l);
+
+        assertNotNull(contactEntity);
+
+    }
+
+    @Test
+    public void testGetAllContacts(){
+        List<ContactEntity> list = service.getAllContacts();
+
+        assertNotNull(list);
+    }
+
+    @Test
+    public void testUpdateContact() {
+        try{
+            boolean result = service.updateContact(contact,id);
+            assertTrue(result);
+
+        }catch(Exception ex){ System.out.println(ex.getMessage()); }
+
+    }
+
+    @Test
+    public void testMoveToBin() throws Exception{
+       ContactEntity contactEntity = service.getContact(id);
+
+       if(contactEntity.getStatus() == Status.TRASH)
+           throw new Exception("The contact is already at the bin !");
+
+       boolean result = service.moveToBin(id);
+
+       assertTrue(result);
+    }
+
+    @Test
+    public void testRestoreFromBin() throws Exception{
+        ContactEntity contactEntity = service.getContact(id);
+
+        if(contactEntity.getStatus() != Status.TRASH)
+            throw new Exception("The contact is already at the contact book !");
+
+        boolean result = service.restoreFromBin(id);
+
+        assertTrue(result);
+    }
